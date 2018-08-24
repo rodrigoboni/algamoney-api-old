@@ -18,6 +18,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.algaworks.algamoney.api.model.Categoria;
 import com.algaworks.algamoney.api.repository.CategoriaRepository;
 
+/**
+ * Rest controller para categorias
+ * @author rodrigo
+ *
+ */
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
@@ -34,7 +39,8 @@ public class CategoriaResource {
 	@PostMapping
 	public ResponseEntity<Categoria> criar(@RequestBody Categoria categoria, HttpServletResponse response) {
 		Categoria saved = categoriaRepository.save(categoria);
-		
+
+		// montar uri para obter o registro persistido
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}").buildAndExpand(saved.getCodigo()).toUri();
 		
 		return ResponseEntity.created(uri).body(saved);

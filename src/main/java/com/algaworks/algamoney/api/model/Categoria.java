@@ -6,6 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Entidade categoria
+ * @author rodrigo
+ */
 @Entity
 @Table(name="categoria")
 public class Categoria {

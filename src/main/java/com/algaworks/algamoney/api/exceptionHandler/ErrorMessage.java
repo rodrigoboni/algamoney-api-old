@@ -1,31 +1,39 @@
 package com.algaworks.algamoney.api.exceptionHandler;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Classe / bean para representar erro no http response
+ * Retorna a mensagem + id do erro, p/ auxiliar no suporte
+ * Grava detalhes do erro no arquivo de log, junto com o id do erro
+ * 
+ * @author rodrigo
+ *
+ */
 public class ErrorMessage {
 	private String message;
-	private String exceptionCause;
-	private String exceptionMessage;
-	private StackTraceElement[] stackTrace;
+	private String errorId;
+	
+	private final Logger logger;
 
 	public ErrorMessage(String message, Exception exception) {
 		this.message = message;
-		this.exceptionCause = exception.getCause().toString();
-		this.exceptionMessage = exception.getMessage();
-		stackTrace = exception.getStackTrace();
+		this.errorId = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		String logMsg = errorId + " - " + message;
+		
+		logger = LoggerFactory.getLogger(exception.getClass());
+		logger.error(logMsg, exception);
 	}
 
 	public String getMessage() {
 		return message;
 	}
 
-	public String getExceptionCause() {
-		return exceptionCause;
-	}
-
-	public String getExceptionMessage() {
-		return exceptionMessage;
-	}
-
-	public StackTraceElement[] getStackTrace() {
-		return stackTrace;
+	public String getErrorId() {
+		return errorId;
 	}
 }
