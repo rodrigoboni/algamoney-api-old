@@ -3,7 +3,7 @@ package com.algaworks.algamoney.api.resource;
 import java.net.URI;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,22 +30,37 @@ public class CategoriaResource {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 	
+	/**
+	 * retorna sempre status 200, mesmo com coleção vazia
+	 * @return
+	 */
 	@GetMapping
 	public ResponseEntity<?> listar() {
 		List<Categoria> categorias = categoriaRepository.findAll();
 		return ResponseEntity.ok(categorias);
 	}
-	
+
+	/**
+	 * persiste categoria e retorna uri + entidade
+	 * @param categoria
+	 * @return
+	 */
 	@PostMapping
-	public ResponseEntity<Categoria> criar(@RequestBody Categoria categoria, HttpServletResponse response) {
+	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria) {
 		Categoria saved = categoriaRepository.save(categoria);
 
 		// montar uri para obter o registro persistido
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}").buildAndExpand(saved.getCodigo()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+				.buildAndExpand(saved.getCodigo()).toUri();
 		
 		return ResponseEntity.created(uri).body(saved);
 	}
-	
+
+	/**
+	 * retorna entidade pelo código
+	 * @param codigo
+	 * @return
+	 */
 	@GetMapping("/{codigo}")
 	public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
 		Categoria categoria = categoriaRepository.findOne(codigo);

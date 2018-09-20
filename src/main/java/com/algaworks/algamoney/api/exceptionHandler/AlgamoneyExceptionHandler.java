@@ -1,5 +1,11 @@
 package com.algaworks.algamoney.api.exceptionHandler;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -7,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -26,6 +34,8 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Autowired
 	MessageSource messageSource;
+	
+	private Logger logger;
 
 	/**
 	 * Tratamento de erro para recebimento de objetos nos endpoints / requests
@@ -35,23 +45,73 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
-		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale()), ex), headers, HttpStatus.BAD_REQUEST, request);
+		return handleExceptionInternal(ex, 
+				new ErrorMessage(messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale())), 
+				headers, 
+				HttpStatus.BAD_REQUEST, 
+				request);
+	}
+	
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+		return handleExceptionInternal(ex, getFieldValidationErrors(ex), headers, status, request);
 	}
 
 	/**
 	 * Tratamento de erros genéricos
+	 * os outros métodos desta classe invocam este método sempre
 	 */
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 		
-		// os outros métodos invocam este método - então verificar se body já é uma instância de ErrorMessage
-		// se não for instanciar, para garantir a gravação do log em arquivo + geração de timestamp p/ enviar no http response
-		// para facilitar o suporte
 		if(body == null || !(body instanceof ErrorMessage)) {
-			body = new ErrorMessage(messageSource.getMessage("erro.generico", null, LocaleContextHolder.getLocale()), ex);
+			body = new ErrorMessage(messageSource.getMessage("erro.generico", null, LocaleContextHolder.getLocale()));
 		}
 		
+		persistLog(body, ex);
+		
 		return super.handleExceptionInternal(ex, body, headers, status, request);
+	}
+
+	/**
+	 * Lançar logs no arquivo configurado no log4j
+	 * @param body
+	 * @param ex
+	 */
+	private void persistLog(Object body, Exception ex) {
+		if(body == null || !(body instanceof ErrorMessage)) {
+			return;
+		}
+		
+		logger = LoggerFactory.getLogger(ex.getClass());
+		
+		ErrorMessage auxErrorMessage = (ErrorMessage)body;
+		
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n"+auxErrorMessage.getErrorId()+"\n");
+		
+		if(auxErrorMessage.getMessages() != null && !auxErrorMessage.getMessages().isEmpty()) {
+			for (Iterator<String> it = auxErrorMessage.getMessages().iterator(); it.hasNext();) {
+				String message = (String) it.next();
+				logMsg.append(message+"\n");
+			}
+		}
+		
+		logger.error(logMsg.toString(), ex);
+	}
+	
+	private ErrorMessage getFieldValidationErrors(MethodArgumentNotValidException ex) {
+		if(ex == null || ex.getBindingResult() == null || !ex.getBindingResult().hasFieldErrors()) {
+			return null;
+		}
+		
+		List<String> fieldErrors = new ArrayList<>();
+		for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+			fieldErrors.add(messageSource.getMessage(fieldError, LocaleContextHolder.getLocale()));
+		}
+		
+		return new ErrorMessage(fieldErrors);
 	}
 }

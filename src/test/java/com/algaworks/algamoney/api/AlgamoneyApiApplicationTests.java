@@ -8,9 +8,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AlgamoneyApiApplicationTests {
+	
+//	@MockBean
+//	private CategoriaResource categoriaResource;
 
 	@Test
 	public void contextLoads() {
 	}
+	
+//	@Test
+//	public void getCategoriaResourceListar() {
+//		Mockito.when(methodCall)
+//	}
 
 }
