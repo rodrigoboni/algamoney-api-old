@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Categoria;
-import com.algaworks.algamoney.api.repository.CategoriaRepository;
+import com.algaworks.algamoney.api.service.CategoriaService;
 
 /**
  * Rest controller para categorias
@@ -33,7 +33,7 @@ import com.algaworks.algamoney.api.repository.CategoriaRepository;
 public class CategoriaResource {
 
 	@Autowired
-	private CategoriaRepository categoriaRepository;
+	private CategoriaService categoriaService;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
@@ -45,7 +45,7 @@ public class CategoriaResource {
 	 */
 	@GetMapping
 	public ResponseEntity<?> listar() {
-		List<Categoria> categorias = categoriaRepository.findAll();
+		List<Categoria> categorias = categoriaService.listar();
 		return ResponseEntity.ok(categorias);
 	}
 
@@ -57,7 +57,7 @@ public class CategoriaResource {
 	 */
 	@GetMapping("/{codigo}")
 	public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
-		Categoria categoria = categoriaRepository.findOne(codigo);
+		Categoria categoria = categoriaService.buscarPeloCodigo(codigo);
 		return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
 	}
 
@@ -69,7 +69,7 @@ public class CategoriaResource {
 	 */
 	@PostMapping
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-		Categoria saved = categoriaRepository.save(categoria);
+		Categoria saved = categoriaService.salvar(categoria);
 
 		// publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
 		// desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
@@ -81,6 +81,6 @@ public class CategoriaResource {
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long codigo) {
-		categoriaRepository.delete(codigo);
+		categoriaService.remover(codigo);
 	}
 }
