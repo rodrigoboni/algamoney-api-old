@@ -17,7 +17,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -55,12 +54,23 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 				request);
 	}
 	
+	/**
+	 * Tratamento de erro para bean validations
+	 */
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 		return handleExceptionInternal(ex, getFieldValidationErrors(ex), headers, status, request);
 	}
 	
+	/**
+	 * Tratamento de exception específica (EmptyResultDataAccessException)
+	 * Dispara ao tentar excluir registro que não existe, por exemplo
+	 * 
+	 * @param ex
+	 * @param request
+	 * @return
+	 */
 	//A anotação exceptionhandler define qual exception o método deve tratar
 	@ExceptionHandler({EmptyResultDataAccessException.class})
 	public ResponseEntity<Object> handleEmptyResultDataAccessException(RuntimeException ex, WebRequest request) {
@@ -115,6 +125,11 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 		logger.error(logMsg.toString(), ex);
 	}
 	
+	/**
+	 * Percorrer lista de validações e montar objeto para mensagem de erro
+	 * @param ex
+	 * @return
+	 */
 	private ErrorMessage getFieldValidationErrors(MethodArgumentNotValidException ex) {
 		if(ex == null || ex.getBindingResult() == null || !ex.getBindingResult().hasFieldErrors()) {
 			return null;

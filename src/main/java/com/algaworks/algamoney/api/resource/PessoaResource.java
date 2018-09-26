@@ -57,7 +57,11 @@ public class PessoaResource {
 	@PostMapping
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
 		Pessoa saved = pessoaRepository.save(pessoa);
+		
+		//publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
+		//desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, saved.getCodigo()));
+		
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
 
