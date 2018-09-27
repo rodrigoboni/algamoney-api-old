@@ -22,12 +22,6 @@ import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Categoria;
 import com.algaworks.algamoney.api.service.CategoriaService;
 
-/**
- * Rest controller para categorias
- * 
- * @author rodrigo
- *
- */
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
@@ -38,38 +32,21 @@ public class CategoriaResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
-	/**
-	 * retorna sempre status 200, mesmo com coleção vazia
-	 * 
-	 * @return
-	 */
 	@GetMapping
-	public ResponseEntity<?> listar() {
-		List<Categoria> categorias = categoriaService.listar();
+	public ResponseEntity<?> list() {
+		List<Categoria> categorias = categoriaService.list();
 		return ResponseEntity.ok(categorias);
 	}
 
-	/**
-	 * retorna entidade pelo código
-	 * 
-	 * @param codigo
-	 * @return
-	 */
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
-		Categoria categoria = categoriaService.buscarPeloCodigo(codigo);
+	public ResponseEntity<Categoria> findByCodigo(@PathVariable Long codigo) {
+		Categoria categoria = categoriaService.findByCodigo(codigo);
 		return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
 	}
 
-	/**
-	 * persiste categoria e retorna uri + entidade
-	 * 
-	 * @param categoria
-	 * @return
-	 */
 	@PostMapping
-	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-		Categoria saved = categoriaService.salvar(categoria);
+	public ResponseEntity<Categoria> persist(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
+		Categoria saved = categoriaService.persist(categoria);
 
 		// publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
 		// desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
@@ -80,7 +57,7 @@ public class CategoriaResource {
 
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(@PathVariable Long codigo) {
-		categoriaService.remover(codigo);
+	public void remove(@PathVariable Long codigo) {
+		categoriaService.remove(codigo);
 	}
 }

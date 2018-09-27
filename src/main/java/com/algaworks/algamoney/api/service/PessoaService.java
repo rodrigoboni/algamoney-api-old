@@ -15,24 +15,24 @@ public class PessoaService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
-	public List<Pessoa> listar() {
+	public List<Pessoa> list() {
 		return pessoaRepository.findAll();
 	}
 
-	public Pessoa buscarPeloCodigo(Long codigo) {
+	public Pessoa findByCodigo(Long codigo) {
 		return pessoaRepository.findOne(codigo);
 	}
 
-	public Pessoa salvar(Pessoa pessoa) {
+	public Pessoa persist(Pessoa pessoa) {
 		return pessoaRepository.save(pessoa);
 	}
 
-	public void remover(Long codigo) {
+	public void remove(Long codigo) {
 		pessoaRepository.delete(codigo);
 	}
 	
-	public Pessoa atualizar (Long codigo, Pessoa pessoa) {
-		Pessoa saved = buscarPessoaPeloCodigo(codigo);
+	public Pessoa update(Long codigo, Pessoa pessoa) {
+		Pessoa saved = findPessoaByCodigo(codigo);
 		
 		BeanUtils.copyProperties(pessoa, saved, "codigo");
 		pessoaRepository.save(saved);
@@ -40,13 +40,13 @@ public class PessoaService {
 		return saved;
 	}
 
-	public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
-		Pessoa saved = buscarPessoaPeloCodigo(codigo);
+	public void updatePropertyAtivo(Long codigo, Boolean ativo) {
+		Pessoa saved = findPessoaByCodigo(codigo);
 		saved.setAtivo(ativo);
 		pessoaRepository.save(saved);
 	}	
 	
-	public Pessoa buscarPessoaPeloCodigo(Long codigo) {
+	public Pessoa findPessoaByCodigo(Long codigo) {
 		Pessoa saved = pessoaRepository.findOne(codigo);
 		if(saved == null) {
 			throw new EmptyResultDataAccessException(1);

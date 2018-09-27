@@ -13,10 +13,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-/**
- * Representação da entidade pessoa
- * @author rodrigo.boni
- */
 @Entity
 @Table(name = "pessoa")
 public class Pessoa {

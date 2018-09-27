@@ -20,16 +20,16 @@ public class LancamentoService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 	
-	public List<Lancamento> listar(LancamentoFilter filter) {
+	public List<Lancamento> list(LancamentoFilter filter) {
 		// utiliza o método definido na interface LancamentoRepositoryQuery
-		return lancamentoRepository.filtrar(filter);
+		return lancamentoRepository.filter(filter);
 	}
 
-	public Lancamento buscarPeloCodigo(Long codigo) {
+	public Lancamento findByCodigo(Long codigo) {
 		return lancamentoRepository.findOne(codigo);
 	}
 	
-	public Lancamento salvar(Lancamento lancamento) {
+	public Lancamento persist(Lancamento lancamento) {
 		Pessoa pessoa = pessoaRepository.findOne(lancamento.getPessoa().getCodigo());
 		if(pessoa == null || pessoa.isInativo()) {
 			throw new PessoaInexistenteOuInativaException();

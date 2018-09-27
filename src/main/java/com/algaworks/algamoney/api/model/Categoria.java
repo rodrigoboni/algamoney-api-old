@@ -8,10 +8,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Entidade categoria
- * @author rodrigo
- */
 @Entity
 @Table(name="categoria")
 public class Categoria {

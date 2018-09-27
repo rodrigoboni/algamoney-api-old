@@ -14,31 +14,19 @@ public class CategoriaService {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
-	public List<Categoria> listar() {
+	public List<Categoria> list() {
 		return categoriaRepository.findAll();
 	}
 
-	/**
-	 * retorna entidade pelo código
-	 * 
-	 * @param codigo
-	 * @return
-	 */
-	public Categoria buscarPeloCodigo(Long codigo) {
+	public Categoria findByCodigo(Long codigo) {
 		return categoriaRepository.findOne(codigo);
 	}
 
-	/**
-	 * persiste categoria e retorna uri + entidade
-	 * 
-	 * @param categoria
-	 * @return
-	 */
-	public Categoria salvar(Categoria categoria) {
+	public Categoria persist(Categoria categoria) {
 		return categoriaRepository.save(categoria);
 	}
 
-	public void remover(Long codigo) {
+	public void remove(Long codigo) {
 		categoriaRepository.delete(codigo);
 	}
 }

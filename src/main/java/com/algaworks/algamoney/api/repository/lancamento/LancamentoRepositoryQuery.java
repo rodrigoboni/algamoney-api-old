@@ -11,5 +11,5 @@ import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
  *
  */
 public interface LancamentoRepositoryQuery { // o nome da interface tem que ser igual ao nome do repositório com sufixo "Query"
-	public List<Lancamento> filtrar(LancamentoFilter filter);
+	public List<Lancamento> filter(LancamentoFilter filter);
 }

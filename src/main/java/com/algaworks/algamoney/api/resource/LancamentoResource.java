@@ -21,12 +21,6 @@ import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.service.LancamentoService;
 
-/**
- * Rest controller para lancamentos
- * 
- * @author rodrigo
- *
- */
 @RestController
 @RequestMapping("/lancamentos")
 public class LancamentoResource {
@@ -37,28 +31,23 @@ public class LancamentoResource {
 	@Autowired
 	private LancamentoService lancamentoService;
 	
-	/**
-	 * retorna sempre status 200, mesmo com coleção vazia
-	 * 
-	 * @return
-	 */
 	@GetMapping
-	public ResponseEntity<?> pesquisar(LancamentoFilter filter) {
+	public ResponseEntity<?> list(LancamentoFilter filter) {
 		// recebe filtros pelo bean lancamentofilter
-		List<Lancamento> lancamentos = lancamentoService.listar(filter);
+		List<Lancamento> lancamentos = lancamentoService.list(filter);
 		
 		return ResponseEntity.ok(lancamentos);
 	}
 
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
-		Lancamento lancamento = lancamentoService.buscarPeloCodigo(codigo);
+	public ResponseEntity<Lancamento> findByCodigo(@PathVariable Long codigo) {
+		Lancamento lancamento = lancamentoService.findByCodigo(codigo);
 		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
-	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
-		Lancamento saved = lancamentoService.salvar(lancamento);
+	public ResponseEntity<Lancamento> persist(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
+		Lancamento saved = lancamentoService.persist(lancamento);
 		
 		//publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
 		//desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes

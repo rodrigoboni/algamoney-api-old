@@ -23,12 +23,6 @@ import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.service.PessoaService;
 
-/**
- * Rest controller para pessoas
- * 
- * @author rodrigo
- *
- */
 @RestController
 @RequestMapping("/pessoas")
 public class PessoaResource {
@@ -39,26 +33,21 @@ public class PessoaResource {
 	@Autowired
 	private PessoaService pessoaService;
 	
-	/**
-	 * retorna sempre status 200, mesmo com coleção vazia
-	 * 
-	 * @return
-	 */
 	@GetMapping
-	public ResponseEntity<?> listar() {
-		List<Pessoa> categorias = pessoaService.listar();
+	public ResponseEntity<?> list() {
+		List<Pessoa> categorias = pessoaService.list();
 		return ResponseEntity.ok(categorias);
 	}
 
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
-		Pessoa pessoa = pessoaService.buscarPeloCodigo(codigo);
+	public ResponseEntity<Pessoa> findByCodigo(@PathVariable Long codigo) {
+		Pessoa pessoa = pessoaService.findByCodigo(codigo);
 		return pessoa != null ? ResponseEntity.ok(pessoa) : ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
-	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
-		Pessoa saved = pessoaService.salvar(pessoa);
+	public ResponseEntity<Pessoa> persist(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
+		Pessoa saved = pessoaService.persist(pessoa);
 		
 		//publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
 		//desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
@@ -69,19 +58,19 @@ public class PessoaResource {
 
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(@PathVariable Long codigo) {
-		pessoaService.remover(codigo);
+	public void remove(@PathVariable Long codigo) {
+		pessoaService.remove(codigo);
 	}
 	
 	@PutMapping("/{codigo}")
-	public ResponseEntity<Pessoa> atualizar (@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
-		Pessoa saved = pessoaService.atualizar(codigo, pessoa);
+	public ResponseEntity<Pessoa> update(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+		Pessoa saved = pessoaService.update(codigo, pessoa);
 		return ResponseEntity.ok(saved);
 	}
 	
 	@PutMapping("/{codigo}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
-		pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+	public void updatePropertyAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
+		pessoaService.updatePropertyAtivo(codigo, ativo);
 	}
 }

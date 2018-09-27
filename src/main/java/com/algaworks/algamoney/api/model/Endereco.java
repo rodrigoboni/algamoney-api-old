@@ -2,10 +2,6 @@ package com.algaworks.algamoney.api.model;
 
 import javax.persistence.Embeddable;
 
-/**
- * Representação dos campos relacionados a endereço p/ utilizar em entidades
- * @author rodrigo.boni
- */
 @Embeddable
 public class Endereco {
 	private String logradouro;
