@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Pessoa;
-import com.algaworks.algamoney.api.service.PessoaService;
+import com.algaworks.algamoney.api.service.impl.PessoaService;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -35,7 +35,7 @@ public class PessoaResource {
 	
 	@GetMapping
 	public ResponseEntity<?> list() {
-		List<Pessoa> categorias = pessoaService.list();
+		List<Pessoa> categorias = pessoaService.listAll();
 		return ResponseEntity.ok(categorias);
 	}
 

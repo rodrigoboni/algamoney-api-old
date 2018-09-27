@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.service;
+package com.algaworks.algamoney.api.service.impl;
 
 import java.util.List;
 
@@ -9,32 +9,40 @@ import org.springframework.stereotype.Service;
 
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.PessoaRepository;
+import com.algaworks.algamoney.api.repository.filter.Filter;
+import com.algaworks.algamoney.api.service.ServiceInterface;
 
 @Service
-public class PessoaService {
+public class PessoaService implements ServiceInterface<Pessoa, Object> {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
-	public List<Pessoa> list() {
+	public List<Pessoa> listAll() {
 		return pessoaRepository.findAll();
 	}
 
+	@Override
+	public List<Pessoa> list(Object filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public Pessoa findByCodigo(Long codigo) {
 		return pessoaRepository.findOne(codigo);
 	}
 
-	public Pessoa persist(Pessoa pessoa) {
-		return pessoaRepository.save(pessoa);
+	public Pessoa persist(Pessoa entity) {
+		return pessoaRepository.save(entity);
 	}
 
 	public void remove(Long codigo) {
 		pessoaRepository.delete(codigo);
 	}
 	
-	public Pessoa update(Long codigo, Pessoa pessoa) {
+	public Pessoa update(Long codigo, Pessoa entity) {
 		Pessoa saved = findPessoaByCodigo(codigo);
 		
-		BeanUtils.copyProperties(pessoa, saved, "codigo");
+		BeanUtils.copyProperties(entity, saved, "codigo");
 		pessoaRepository.save(saved);
 		
 		return saved;

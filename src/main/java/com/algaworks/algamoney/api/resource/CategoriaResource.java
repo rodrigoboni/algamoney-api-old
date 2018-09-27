@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Categoria;
-import com.algaworks.algamoney.api.service.CategoriaService;
+import com.algaworks.algamoney.api.service.impl.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
@@ -34,7 +34,7 @@ public class CategoriaResource {
 
 	@GetMapping
 	public ResponseEntity<?> list() {
-		List<Categoria> categorias = categoriaService.list();
+		List<Categoria> categorias = categoriaService.listAll();
 		return ResponseEntity.ok(categorias);
 	}
 
