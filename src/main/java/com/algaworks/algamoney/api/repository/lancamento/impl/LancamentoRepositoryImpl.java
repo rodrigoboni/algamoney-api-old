@@ -11,6 +11,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import com.algaworks.algamoney.api.model.Lancamento;
@@ -28,19 +30,43 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
 	@PersistenceContext
 	private EntityManager manager;
+	
+	@Value("app.recordsPerPage")
+	private String defaultRecordsPerPage;
 
 	@Override
-	public List<Lancamento> filter(LancamentoFilter filter) {
+	public List<Lancamento> filter(LancamentoFilter filter, Pageable pageable) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		CriteriaQuery<Lancamento> criteria = builder.createQuery(Lancamento.class);
 
 		Root<Lancamento> from = criteria.from(Lancamento.class);
 
-		Predicate[] predicates = getPredicates(filter, builder, from);
-		criteria.where(predicates);
-
+		criteria.where(getPredicates(filter, builder, from));
+		
 		TypedQuery<Lancamento> query = manager.createQuery(criteria);
+		setPageable(query, pageable);
+		
 		return query.getResultList();
+	}
+
+	private void setPageable(TypedQuery<Lancamento> query, Pageable pageable) {
+		int page = pageable.getPageNumber() >= 0 ? pageable.getPageNumber() : 0;
+		int pageSize = pageable.getPageSize() > 0 ? pageable.getPageSize() : Integer.valueOf(defaultRecordsPerPage);
+		query.setFirstResult(page * pageSize);
+		query.setMaxResults(pageSize);
+	}
+	
+	public Long getFilterTotalRecords(LancamentoFilter filter) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		
+		Root<Lancamento> from = criteria.from(Lancamento.class);
+		
+		criteria.where(getPredicates(filter, builder, from));
+		
+		criteria.select(builder.count(from));
+		
+		return manager.createQuery(criteria).getSingleResult();
 	}
 
 	private Predicate[] getPredicates(LancamentoFilter filter, CriteriaBuilder builder, Root<Lancamento> from) {

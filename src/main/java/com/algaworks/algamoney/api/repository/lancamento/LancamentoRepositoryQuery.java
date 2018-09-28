@@ -2,6 +2,8 @@ package com.algaworks.algamoney.api.repository.lancamento;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 
@@ -11,5 +13,6 @@ import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
  *
  */
 public interface LancamentoRepositoryQuery { // o nome da interface tem que ser igual ao nome do repositório com sufixo "Query"
-	public List<Lancamento> filter(LancamentoFilter filter);
+	public List<Lancamento> filter(LancamentoFilter filter, Pageable pageable);
+	public Long getFilterTotalRecords(LancamentoFilter filter);
 }

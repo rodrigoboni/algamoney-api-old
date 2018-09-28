@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,11 +36,12 @@ public class LancamentoResource {
 	private LancamentoService lancamentoService;
 	
 	@GetMapping
-	public ResponseEntity<?> list(LancamentoFilter filter) {
+	public ResponseEntity<?> list(LancamentoFilter filter, Pageable pageable) {
 		// recebe filtros pelo bean lancamentofilter
-		List<Lancamento> lancamentos = lancamentoService.list(filter);
+		List<Lancamento> lancamentos = lancamentoService.list(filter, pageable);
+		Long totalRecords = lancamentoService.getListTotalRecords(filter);
 		
-		return ResponseEntity.ok(lancamentos);
+		return ResponseEntity.ok(new PageImpl<>(lancamentos, pageable, totalRecords));
 	}
 
 	@GetMapping("/{codigo}")

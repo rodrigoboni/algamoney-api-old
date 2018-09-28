@@ -3,6 +3,7 @@ package com.algaworks.algamoney.api.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algamoney.api.exception.PessoaInexistenteOuInativaException;
@@ -21,9 +22,13 @@ public class LancamentoService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
-	public List<Lancamento> list(LancamentoFilter filter) {
+	public List<Lancamento> list(LancamentoFilter filter, Pageable pageable) {
 		// utiliza o método definido na interface LancamentoRepositoryQuery
-		return lancamentoRepository.filter(filter);
+		return lancamentoRepository.filter(filter, pageable);
+	}
+	
+	public Long getListTotalRecords(LancamentoFilter filter) {
+		return lancamentoRepository.getFilterTotalRecords(filter);
 	}
 
 	public Lancamento findByCodigo(Long codigo) {
