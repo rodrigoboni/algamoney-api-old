@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.enums;
+package com.algaworks.algamoney.api.model.enums;
 
 public enum TipoLancamento {
 	RECEITA,

@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.model.Lancamento_;
-import com.algaworks.algamoney.api.repository.filter.impl.LancamentoFilter;
+import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.repository.lancamento.LancamentoRepositoryQuery;
 
 /**
@@ -24,7 +24,7 @@ import com.algaworks.algamoney.api.repository.lancamento.LancamentoRepositoryQue
  * @author s2it_rboni
  *
  */
-public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery<LancamentoFilter> {
+public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
 	@PersistenceContext
 	private EntityManager manager;

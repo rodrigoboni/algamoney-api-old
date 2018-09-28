@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.algaworks.algamoney.api.enums.TipoLancamento;
+import com.algaworks.algamoney.api.model.enums.TipoLancamento;
 
 @Entity
 @Table(name="lancamento")

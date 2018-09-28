@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.service.impl;
+package com.algaworks.algamoney.api.service;
 
 import java.util.List;
 
@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.algaworks.algamoney.api.model.Categoria;
 import com.algaworks.algamoney.api.repository.CategoriaRepository;
-import com.algaworks.algamoney.api.repository.filter.Filter;
-import com.algaworks.algamoney.api.service.ServiceInterface;
 
 @Service
-public class CategoriaService implements ServiceInterface<Categoria, Object> {
+public class CategoriaService {
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
@@ -20,12 +18,6 @@ public class CategoriaService implements ServiceInterface<Categoria, Object> {
 		return categoriaRepository.findAll();
 	}
 
-	@Override
-	public List<Categoria> list(Object filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public Categoria findByCodigo(Long codigo) {
 		return categoriaRepository.findOne(codigo);
 	}
@@ -36,11 +28,5 @@ public class CategoriaService implements ServiceInterface<Categoria, Object> {
 
 	public void remove(Long codigo) {
 		categoriaRepository.delete(codigo);
-	}
-
-	@Override
-	public Categoria update(Long codigo, Categoria entity) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

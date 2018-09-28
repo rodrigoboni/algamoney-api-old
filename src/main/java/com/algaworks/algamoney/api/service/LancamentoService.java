@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.service.impl;
+package com.algaworks.algamoney.api.service;
 
 import java.util.List;
 
@@ -10,24 +10,17 @@ import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.LancamentoRepository;
 import com.algaworks.algamoney.api.repository.PessoaRepository;
-import com.algaworks.algamoney.api.repository.filter.Filter;
-import com.algaworks.algamoney.api.repository.filter.impl.LancamentoFilter;
-import com.algaworks.algamoney.api.service.ServiceInterface;
+import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 
 @Service
-public class LancamentoService implements ServiceInterface<Lancamento, LancamentoFilter> {
+public class LancamentoService {
+	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
-	@Override
-	public List<Lancamento> listAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public List<Lancamento> list(LancamentoFilter filter) {
 		// utiliza o método definido na interface LancamentoRepositoryQuery
 		return lancamentoRepository.filter(filter);
@@ -46,14 +39,7 @@ public class LancamentoService implements ServiceInterface<Lancamento, Lancament
 		return lancamentoRepository.save(lancamento);
 	}
 
-	@Override
 	public void remove(Long codigo) {
 		lancamentoRepository.delete(codigo);
-	}
-
-	@Override
-	public Lancamento update(Long codigo, Lancamento entity) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

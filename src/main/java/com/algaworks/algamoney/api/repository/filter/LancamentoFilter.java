@@ -1,17 +1,15 @@
-package com.algaworks.algamoney.api.repository.filter.impl;
+package com.algaworks.algamoney.api.repository.filter;
 
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
-
-import com.algaworks.algamoney.api.repository.filter.Filter;
 
 /**
  * Bean para receber filtros de pesquisa da entidade lancamento
  * @author s2it_rboni
  *
  */
-public class LancamentoFilter extends Filter {
+public class LancamentoFilter {
 	private String descricao;
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")

@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.service.impl;
+package com.algaworks.algamoney.api.service;
 
 import java.util.List;
 
@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.PessoaRepository;
-import com.algaworks.algamoney.api.repository.filter.Filter;
-import com.algaworks.algamoney.api.service.ServiceInterface;
 
 @Service
-public class PessoaService implements ServiceInterface<Pessoa, Object> {
+public class PessoaService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
@@ -21,12 +19,6 @@ public class PessoaService implements ServiceInterface<Pessoa, Object> {
 		return pessoaRepository.findAll();
 	}
 
-	@Override
-	public List<Pessoa> list(Object filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public Pessoa findByCodigo(Long codigo) {
 		return pessoaRepository.findOne(codigo);
 	}

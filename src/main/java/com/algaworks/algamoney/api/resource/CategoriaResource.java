@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Categoria;
-import com.algaworks.algamoney.api.service.impl.CategoriaService;
+import com.algaworks.algamoney.api.service.CategoriaService;
 
 @RestController
 @RequestMapping("/categorias")
