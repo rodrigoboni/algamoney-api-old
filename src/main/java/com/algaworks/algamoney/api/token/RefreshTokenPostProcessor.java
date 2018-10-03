@@ -18,20 +18,30 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
  * Modificar response http para tirar refresh token do body e por em cookie
+ * 
+ * Define cookie seguro (qdo em https) - desta forma o js não consegue acessar o cookie, gerando risco de segurança
+ * 
+ * O browser sempre envia o cookie junto com o request
+ * 
+ * Assim o filtro definido p/ pré-processar os requests p/ obter novo token são interceptados e o refresh token 
+ * recebido via cookie é adicionado como parâmetro no body do request
+ * 
  * @author s2it_rboni
- *
  */
 @ControllerAdvice
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken> {
 
 	/**
-	 * Qdo este método retornar true o método beforebodywrite será invocado
+	 * Qdo este método retornar true o método beforebodywrite será invocado(filtra qdo o body deve ser modificado)
 	 */
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
 		return returnType.getMethod().getName().equals("postAccessToken"); // interceptar response somente qdo for request do oauth
 	}
 
+	/**
+	 * Definir cookie e remover o token do response body
+	 */
 	@Override
 	public OAuth2AccessToken beforeBodyWrite(OAuth2AccessToken body, MethodParameter returnType,
 			MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType,
