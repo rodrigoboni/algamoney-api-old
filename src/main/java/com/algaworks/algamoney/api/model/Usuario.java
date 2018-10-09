@@ -18,8 +18,9 @@ public class Usuario {
 	private String email;
 	private String senha;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name="usuario_permissao", joinColumns = @JoinColumn(name="codigo_usuario"), inverseJoinColumns = @JoinColumn(name="codigo_permissao"))
+	@ManyToMany(fetch = FetchType.EAGER) // default p/ relacionamentos x-to-many é lazy - neste caso ao carregar usuário já trazer permissões
+	@JoinTable(name="usuario_permissao", joinColumns = @JoinColumn(name="codigo_usuario"), 
+		inverseJoinColumns = @JoinColumn(name="codigo_permissao"))
 	private List<Permissao> permissao;
 
 	public Long getCodigo() {

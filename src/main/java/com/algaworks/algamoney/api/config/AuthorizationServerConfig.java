@@ -13,7 +13,10 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
- * Configuração do servidor de autorização
+ * Configuração do servidor de autorização 
+ * 
+ * esta parte poderia estar separada em outro app / projeto p/ responder a outros micro-serviços por exemplo
+ * 
  * @author s2it_rboni
  *
  */
@@ -22,8 +25,12 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
 	@Autowired
+	// recebe instância do provedor de autenticação default do spring
 	private AuthenticationManager authManager;
 	
+	/**
+	 * Configura o autorizador de clientes oauth
+	 */
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients
@@ -33,18 +40,25 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.scopes("read", "write") // escopos que o cliente tem acesso
 		.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
 		.accessTokenValiditySeconds(20) // tempo de validade do token
-		.refreshTokenValiditySeconds(3600*24); // validade do token renovado (24h)
+		.refreshTokenValiditySeconds(3600*24); // validade do token de renovação (24h)
 	}
 	
+	/**
+	 * configura o autorizador de acesso dos endpoints
+	 */
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		endpoints
 		.tokenStore(tokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
 		.accessTokenConverter(getAccessTokenConverter())
-		.reuseRefreshTokens(false) // não permitir reaproveitamento de tokens, forçando renovação
+		.reuseRefreshTokens(false) // não permitir reaproveitamento de tokens de renovação, forçando geração de novo token
 		.authenticationManager(authManager);
 	}
 
+	/**
+	 * Retorna helper p/ converter request oauth em jwt e vice-versa 
+	 * @return
+	 */
 	@Bean
 	public JwtAccessTokenConverter getAccessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
@@ -52,6 +66,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		return jwtAccessTokenConverter;
 	}
 
+	/**
+	 * retorna instância do store de tokens jwt
+	 * @return
+	 */
 	@Bean
 	public TokenStore tokenStore() {
 		return new JwtTokenStore(getAccessTokenConverter());
