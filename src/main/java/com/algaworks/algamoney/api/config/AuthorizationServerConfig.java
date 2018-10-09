@@ -35,12 +35,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients
 		.inMemory() // persistencia em memoria para os usuários
-		.withClient("angular") // id do cliente
-		.secret("@ngul@r0") // senha / segredo do cliente
-		.scopes("read", "write") // escopos que o cliente tem acesso
-		.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
-		.accessTokenValiditySeconds(20) // tempo de validade do token
-		.refreshTokenValiditySeconds(3600*24); // validade do token de renovação (24h)
+			.withClient("angular") // id do cliente
+			.secret("@ngul@r0") // senha / segredo do cliente
+			.scopes("read", "write") // escopos que o cliente tem acesso - além da permissão por usuário pode ser especificado permissão por cliente
+			.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
+			 .accessTokenValiditySeconds(120) // tempo de validade do token (2min)
+			.refreshTokenValiditySeconds(3600) // validade do token de renovação (1h)
+		.and()
+			.withClient("mobile") // id do cliente - exemplo de segundo cliente
+			.secret("m0b1l30") // senha / segredo do cliente
+			.scopes("read") // este cliente tem escopo de leitura somente
+			.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
+			.accessTokenValiditySeconds(120) // tempo de validade do token (2min)
+			.refreshTokenValiditySeconds(3600); // validade do token de renovação (1h)
 	}
 	
 	/**
@@ -68,6 +75,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	/**
 	 * retorna instância do store de tokens jwt
+	 * 
+	 * utilizado para validar apenas, não está armazenando os tokens
+	 * ver métodos na classe jwttokenstore para persistir e remover tokens
+	 * 
 	 * @return
 	 */
 	@Bean
