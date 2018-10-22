@@ -56,10 +56,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure (HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                //.antMatchers("/categorias").permitAll() // liberar url - será ignorada se houver anotação de autorização em resource com esta url
-                .antMatchers("/v2/api-docs").permitAll() // TODO - REMOVER EM PRODUÇÃO
-                .antMatchers("/swagger-ui.html").permitAll() // TODO - REMOVER EM PRODUÇÃO
-                .antMatchers("/webjars/*").permitAll() // TODO - REMOVER EM PRODUÇÃO
                 .anyRequest().authenticated() // as demais urls devem ser autenticadas
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // sessões stateless
