@@ -1,10 +1,7 @@
 package com.algaworks.algamoney.api.security;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
+import com.algaworks.algamoney.api.model.Usuario;
+import com.algaworks.algamoney.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,8 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.algaworks.algamoney.api.model.Usuario;
-import com.algaworks.algamoney.api.repository.UsuarioRepository;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Implementação do serviço de detalhes dos usuários (base em bd)
@@ -34,10 +33,10 @@ public class AppUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		//buscar usuario pelo email
-		Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
+		final Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
 		
 		//se o optional não retornar nada dispara exception para indicar que usuário não existe
-		Usuario usuario = usuarioOptional.orElseThrow(() -> new UsernameNotFoundException("Usuário e/ou senha inválido"));
+		final Usuario usuario = usuarioOptional.orElseThrow(() -> new UsernameNotFoundException("Usuário e/ou senha inválido"));
 		
 		//retorna user com login, senha e permissoes
 		return new User(email, usuario.getSenha(), getPermissoes(usuario));
