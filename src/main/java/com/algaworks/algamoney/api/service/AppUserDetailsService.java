@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.security;
+package com.algaworks.algamoney.api.service;
 
 import com.algaworks.algamoney.api.model.Usuario;
 import com.algaworks.algamoney.api.repository.UsuarioRepository;

@@ -1,4 +1,4 @@
-package com.algaworks.algamoney.api.config;
+package com.algaworks.algamoney.api.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +32,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
    */
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    // TODO Implementar estrutura para armazenar clientes em bd e configurar aqui
     clients
         .inMemory() // persistencia em memoria para os usuários
         .withClient("angular") // id do cliente
@@ -55,9 +56,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
   @Override
   public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
     endpoints
-        .tokenStore(tokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
+        .tokenStore(getTokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
         .accessTokenConverter(getAccessTokenConverter())
-        .reuseRefreshTokens(false) // não permitir reaproveitamento de tokens de renovação, forçando geração de novo token
+        
+        // não permitir reaproveitamento de tokens de renovação, forçando geração de novo token a cada request de token
+        // se for true (default) será necessário uma nova autenticação após a expiração do refresh token
+        .reuseRefreshTokens(false)
+        
         .authenticationManager(authManager);
   }
   
@@ -69,7 +74,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
   @Bean
   public JwtAccessTokenConverter getAccessTokenConverter() {
     final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-    jwtAccessTokenConverter.setSigningKey("algaworks"); // chave de validação dos tokens jwt //TODO DEFINIR CHAVE MAIS FORTE
+    jwtAccessTokenConverter.setSigningKey("algaworks"); // chave de validação dos tokens jwt //TODO DEFINIR CHAVE MAIS FORTE E DINAMICA / ALTERADA PERIODICAMENTE
     return jwtAccessTokenConverter;
   }
   
@@ -82,7 +87,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
    * @return
    */
   @Bean
-  public TokenStore tokenStore() {
+  public TokenStore getTokenStore() {
     return new JwtTokenStore(getAccessTokenConverter());
   }
 }
