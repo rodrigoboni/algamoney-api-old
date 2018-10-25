@@ -16,16 +16,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "pessoa")
 public class Pessoa {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
-	
+
 	@NotBlank
 	private String nome;
-	
+
 	@Embedded
 	private Endereco endereco;
-	
+
 	@NotNull
 	private boolean ativo;
 
@@ -56,7 +57,7 @@ public class Pessoa {
 	public boolean isAtivo() {
 		return ativo;
 	}
-	
+
 	@JsonIgnore
 	@Transient
 	public boolean isInativo() {

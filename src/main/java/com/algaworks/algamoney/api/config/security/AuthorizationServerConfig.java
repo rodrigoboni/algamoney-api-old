@@ -22,72 +22,74 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-  
-  @Autowired
-  // recebe instância do provedor de autenticação default do spring
-  private AuthenticationManager authManager;
-  
-  /**
-   * Configura o autorizador de clientes oauth
-   */
-  @Override
-  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-    // TODO Implementar estrutura para armazenar clientes em bd e configurar aqui
-    clients
-        .inMemory() // persistencia em memoria para os usuários
-        .withClient("angular") // id do cliente
-        .secret("@ngul@r0") // senha / segredo do cliente
-        .scopes("read", "write") // escopos que o cliente tem acesso - além da permissão por usuário pode ser especificado permissão por cliente
-        .authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
-        .accessTokenValiditySeconds(120) // tempo de validade do token (2min)
-        .refreshTokenValiditySeconds(3600) // validade do token de renovação (1h)
-        .and()
-        .withClient("mobile") // id do cliente - exemplo de segundo cliente
-        .secret("m0b1l30") // senha / segredo do cliente
-        .scopes("read") // este cliente tem escopo de leitura somente
-        .authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia p/ receber token - e tb fluxo p/ renovar token
-        .accessTokenValiditySeconds(120) // tempo de validade do token (2min)
-        .refreshTokenValiditySeconds(3600); // validade do token de renovação (1h)
-  }
-  
-  /**
-   * configura o autorizador de acesso dos endpoints
-   */
-  @Override
-  public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-    endpoints
-        .tokenStore(getTokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
-        .accessTokenConverter(getAccessTokenConverter())
-        
-        // não permitir reaproveitamento de tokens de renovação, forçando geração de novo token a cada request de token
-        // se for true (default) será necessário uma nova autenticação após a expiração do refresh token
-        .reuseRefreshTokens(false)
-        
-        .authenticationManager(authManager);
-  }
-  
-  /**
-   * Retorna helper p/ converter request oauth em jwt e vice-versa
-   *
-   * @return
-   */
-  @Bean
-  public JwtAccessTokenConverter getAccessTokenConverter() {
-    final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-    jwtAccessTokenConverter.setSigningKey("algaworks"); // chave de validação dos tokens jwt //TODO DEFINIR CHAVE MAIS FORTE E DINAMICA / ALTERADA PERIODICAMENTE
-    return jwtAccessTokenConverter;
-  }
-  
-  /**
-   * retorna instância do store de tokens jwt
-   * <p>
-   * utilizado para validar apenas, não está armazenando os tokens
-   * ver métodos na classe jwttokenstore para persistir e remover tokens
-   *
-   * @return
-   */
-  @Bean
-  public TokenStore getTokenStore() {
-    return new JwtTokenStore(getAccessTokenConverter());
-  }
+
+	@Autowired
+	// recebe instância do provedor de autenticação default do spring
+	private AuthenticationManager authManager;
+
+	/**
+	 * Configura o autorizador de clientes oauth
+	 */
+	@Override
+	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+		// TODO Implementar estrutura para armazenar clientes em bd e configurar aqui
+		clients.inMemory() // persistencia em memoria para os usuários
+				.withClient("angular") // id do cliente
+				.secret("@ngul@r0") // senha / segredo do cliente
+				.scopes("read", "write") // escopos que o cliente tem acesso - além da permissão por usuário pode ser
+				// especificado permissão por cliente
+				.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia
+				// p/ receber token - e tb fluxo p/ renovar token
+				.accessTokenValiditySeconds(120) // tempo de validade do token (2min)
+				.refreshTokenValiditySeconds(3600) // validade do token de renovação (1h)
+				.and().withClient("mobile") // id do cliente - exemplo de segundo cliente
+				.secret("m0b1l30") // senha / segredo do cliente
+				.scopes("read") // este cliente tem escopo de leitura somente
+				.authorizedGrantTypes("password", "refresh_token") // fluxo oauth onde cliente recebe user+pass e envia
+				// p/ receber token - e tb fluxo p/ renovar token
+				.accessTokenValiditySeconds(120) // tempo de validade do token (2min)
+				.refreshTokenValiditySeconds(3600); // validade do token de renovação (1h)
+	}
+
+	/**
+	 * configura o autorizador de acesso dos endpoints
+	 */
+	@Override
+	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+		endpoints.tokenStore(getTokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
+				.accessTokenConverter(getAccessTokenConverter())
+
+				// não permitir reaproveitamento de tokens de renovação, forçando geração de
+				// novo token a cada request de token
+				// se for true (default) será necessário uma nova autenticação após a expiração
+				// do refresh token
+				.reuseRefreshTokens(false)
+
+				.authenticationManager(authManager);
+	}
+
+	/**
+	 * Retorna helper p/ converter request oauth em jwt e vice-versa
+	 *
+	 * @return
+	 */
+	@Bean
+	public JwtAccessTokenConverter getAccessTokenConverter() {
+		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+		jwtAccessTokenConverter.setSigningKey("algaworks"); // chave de validação dos tokens jwt //TODO DEFINIR CHAVE
+		// MAIS FORTE E DINAMICA / ALTERADA PERIODICAMENTE
+		return jwtAccessTokenConverter;
+	}
+
+	/**
+	 * retorna instância do store de tokens jwt
+	 * <p>
+	 * utilizado para validar apenas, não está armazenando os tokens ver métodos na classe jwttokenstore para persistir e remover tokens
+	 *
+	 * @return
+	 */
+	@Bean
+	public TokenStore getTokenStore() {
+		return new JwtTokenStore(getAccessTokenConverter());
+	}
 }

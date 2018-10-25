@@ -28,8 +28,7 @@ import com.algaworks.algamoney.api.exception.PessoaInexistenteOuInativaException
 import com.algaworks.algamoney.api.exception.bean.ErrorMessage;
 
 /**
- * Class para tratamento de erros
- * Captura todos os erros dos endpoints
+ * Class para tratamento de erros Captura todos os erros dos endpoints
  * 
  * Sobrepor as classes para os tipos específicos de erros conforme necessário
  * 
@@ -39,33 +38,30 @@ import com.algaworks.algamoney.api.exception.bean.ErrorMessage;
  */
 @RestControllerAdvice
 public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
-	
+
 	@Autowired
 	MessageSource messageSource;
-	
+
 	private Logger logger;
 
 	/**
-	 * Tratamento de erro para recebimento de objetos nos endpoints / requests
-	 * A prop spring.jackson.deserialization.fail-on-unknown-properties no application.properties
-	 * Dispara uma exceção se receber um atributo não conhecido no bean informado na assinatura do método
+	 * Tratamento de erro para recebimento de objetos nos endpoints / requests A prop
+	 * spring.jackson.deserialization.fail-on-unknown-properties no application.properties Dispara uma exceção se receber um atributo
+	 * não conhecido no bean informado na assinatura do método
 	 */
 	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
-			HttpStatus status, WebRequest request) {
-		return handleExceptionInternal(ex, 
-				new ErrorMessage(messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale())), 
-				headers, 
-				HttpStatus.BAD_REQUEST, 
-				request);
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale())), headers,
+				HttpStatus.BAD_REQUEST, request);
 	}
-	
+
 	/**
 	 * Tratamento de erro para bean validations
 	 */
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
-			HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
 		return handleExceptionInternal(ex, getFieldValidationErrors(ex), headers, status, request);
 	}
 
@@ -73,126 +69,114 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	 * Tratamento para urls não mapeadas
 	 */
 	@Override
-	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		return handleExceptionInternal(ex, 
-				new ErrorMessage(messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale())), 
-				new HttpHeaders(), 
-				HttpStatus.NOT_FOUND, 
-				request);
+	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale())),
+				new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
-	
+
 	/**
-	 * Tratamento de exception específica (EmptyResultDataAccessException)
-	 * Dispara ao tentar excluir registro que não existe, por exemplo
+	 * Tratamento de exception específica (EmptyResultDataAccessException) Dispara ao tentar excluir registro que não existe, por
+	 * exemplo
 	 * 
 	 * @param ex
 	 * @param request
 	 * @return
 	 */
-	//A anotação exceptionhandler define qual exception o método deve tratar
-	@ExceptionHandler({EmptyResultDataAccessException.class})
+	// A anotação exceptionhandler define qual exception o método deve tratar
+	@ExceptionHandler({ EmptyResultDataAccessException.class })
 	public ResponseEntity<Object> handleEmptyResultDataAccessException(RuntimeException ex, WebRequest request) {
-		return handleExceptionInternal(ex, 
-				new ErrorMessage(messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale())), 
-				new HttpHeaders(), 
-				HttpStatus.NOT_FOUND, 
-				request);
+		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale())),
+				new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
-	
+
 	/**
-	 * Tratamento para exception específica
-	 * Dispara ao tentar atualizar ou excluir registro inexistente
+	 * Tratamento para exception específica Dispara ao tentar atualizar ou excluir registro inexistente
+	 * 
 	 * @param ex
 	 * @param request
 	 * @return
 	 */
-	@ExceptionHandler({DataIntegrityViolationException.class})
+	@ExceptionHandler({ DataIntegrityViolationException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(RuntimeException ex, WebRequest request) {
-		return handleExceptionInternal(ex, 
-				new ErrorMessage(messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale())), 
-				new HttpHeaders(), 
-				HttpStatus.BAD_REQUEST, 
-				request);
+		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale())),
+				new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
-	
+
 	/**
-	 * Tratamento para exception específica
-	 * Dispara ao tentar fazer lançamento para pessoa inexistente ou inativa
+	 * Tratamento para exception específica Dispara ao tentar fazer lançamento para pessoa inexistente ou inativa
+	 * 
 	 * @param ex
 	 * @param request
 	 * @return
 	 */
-	@ExceptionHandler({PessoaInexistenteOuInativaException.class})
+	@ExceptionHandler({ PessoaInexistenteOuInativaException.class })
 	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(RuntimeException ex, WebRequest request) {
-		return handleExceptionInternal(ex, 
-				new ErrorMessage(messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale())), 
-				new HttpHeaders(), 
-				HttpStatus.BAD_REQUEST, 
-				request);
+		return handleExceptionInternal(ex, new ErrorMessage(messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale())),
+				new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
-	
+
 	/**
-	 * Tratamento de erros genéricos
-	 * os outros métodos desta classe invocam este método sempre
+	 * Tratamento de erros genéricos os outros métodos desta classe invocam este método sempre
 	 */
 	@Override
-	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-			HttpStatus status, WebRequest request) {
-		
-		if(body == null || !(body instanceof ErrorMessage)) {
+	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+		if (body == null || !(body instanceof ErrorMessage)) {
 			body = new ErrorMessage(messageSource.getMessage("erro.generico", null, LocaleContextHolder.getLocale()));
 		}
-		
-		((ErrorMessage)body).addMessage(ExceptionUtils.getRootCauseMessage(ex));
-		
+
+		((ErrorMessage) body).addMessage(ExceptionUtils.getRootCauseMessage(ex));
+
 		persistLog(body, ex);
-		
+
 		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	/**
 	 * Lançar logs no arquivo configurado no log4j
+	 * 
 	 * @param body
 	 * @param ex
 	 */
 	private void persistLog(Object body, Exception ex) {
-		if(body == null || !(body instanceof ErrorMessage)) {
+		if (body == null || !(body instanceof ErrorMessage)) {
 			return;
 		}
-		
+
 		logger = LoggerFactory.getLogger(ex.getClass());
-		
-		ErrorMessage auxErrorMessage = (ErrorMessage)body;
-		
+
+		ErrorMessage auxErrorMessage = (ErrorMessage) body;
+
 		StringBuilder logMsg = new StringBuilder();
-		logMsg.append("\n"+auxErrorMessage.getErrorId()+"\n");
-		
-		if(auxErrorMessage.getMessages() != null && !auxErrorMessage.getMessages().isEmpty()) {
+		logMsg.append("\n" + auxErrorMessage.getErrorId() + "\n");
+
+		if (auxErrorMessage.getMessages() != null && !auxErrorMessage.getMessages().isEmpty()) {
 			for (Iterator<String> it = auxErrorMessage.getMessages().iterator(); it.hasNext();) {
 				String message = (String) it.next();
-				logMsg.append(message+"\n");
+				logMsg.append(message + "\n");
 			}
 		}
-		
+
 		logger.error(logMsg.toString(), ex);
 	}
-	
+
 	/**
 	 * Percorrer lista de validações e montar objeto para mensagem de erro
+	 * 
 	 * @param ex
 	 * @return
 	 */
 	private ErrorMessage getFieldValidationErrors(MethodArgumentNotValidException ex) {
-		if(ex == null || ex.getBindingResult() == null || !ex.getBindingResult().hasFieldErrors()) {
+		if (ex == null || ex.getBindingResult() == null || !ex.getBindingResult().hasFieldErrors()) {
 			return null;
 		}
-		
+
 		List<String> fieldErrors = new ArrayList<>();
 		for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
 			fieldErrors.add(messageSource.getMessage(fieldError, LocaleContextHolder.getLocale()));
 		}
-		
+
 		return new ErrorMessage(fieldErrors);
 	}
 }

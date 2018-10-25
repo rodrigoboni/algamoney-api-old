@@ -10,7 +10,7 @@ import com.algaworks.algamoney.api.repository.CategoriaRepository;
 
 @Service
 public class CategoriaService {
-	
+
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 

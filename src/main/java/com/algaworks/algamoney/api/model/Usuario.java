@@ -11,46 +11,46 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="usuario")
+@Table(name = "usuario")
 public class Usuario {
+
 	@Id
 	private Long codigo;
 	private String email;
 	private String senha;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER) // default p/ relacionamentos x-to-many é lazy - neste caso ao carregar usuário já trazer permissões
-	@JoinTable(name="usuario_permissao", joinColumns = @JoinColumn(name="codigo_usuario"), 
-		inverseJoinColumns = @JoinColumn(name="codigo_permissao"))
+	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "codigo_usuario"), inverseJoinColumns = @JoinColumn(name = "codigo_permissao"))
 	private List<Permissao> permissao;
 
 	public Long getCodigo() {
 		return codigo;
 	}
-	
+
 	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}
-	
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	public String getSenha() {
 		return senha;
 	}
-	
+
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
+
 	public List<Permissao> getPermissao() {
 		return permissao;
 	}
-	
+
 	public void setPermissao(List<Permissao> permissao) {
 		this.permissao = permissao;
 	}

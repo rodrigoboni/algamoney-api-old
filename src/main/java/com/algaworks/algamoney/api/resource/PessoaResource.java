@@ -33,7 +33,7 @@ public class PessoaResource {
 
 	@Autowired
 	private PessoaService pessoaService;
-	
+
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA') and #oauth2.hasScope('read')")
 	public ResponseEntity<?> list() {
@@ -52,11 +52,11 @@ public class PessoaResource {
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	public ResponseEntity<Pessoa> persist(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
 		Pessoa saved = pessoaService.persist(pessoa);
-		
-		//publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
-		//desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
+
+		// publicar evento para o listener especificado p/ o tipo de evento disparar a regra definida neste
+		// desta forma é possível centralizar e reaproveitar rotinas comuns entre as classes
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, saved.getCodigo()));
-		
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
 
@@ -66,14 +66,14 @@ public class PessoaResource {
 	public void remove(@PathVariable Long codigo) {
 		pessoaService.remove(codigo);
 	}
-	
+
 	@PutMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	public ResponseEntity<Pessoa> update(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
 		Pessoa saved = pessoaService.update(codigo, pessoa);
 		return ResponseEntity.ok(saved);
 	}
-	
+
 	@PutMapping("/{codigo}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")

@@ -6,9 +6,11 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * Definição de evento da aplicação
+ * 
  * @author rodrigo.boni
  */
 public class RecursoCriadoEvent extends ApplicationEvent {
+
 	private static final long serialVersionUID = 1L;
 	private HttpServletResponse response;
 	private Long codigo;

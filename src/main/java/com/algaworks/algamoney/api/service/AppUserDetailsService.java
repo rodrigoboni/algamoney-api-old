@@ -18,6 +18,7 @@ import java.util.Set;
 
 /**
  * Implementação do serviço de detalhes dos usuários (base em bd)
+ * 
  * @author rodrigo
  *
  */
@@ -26,33 +27,34 @@ public class AppUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
+
 	/**
 	 * Localizar e carregar dados do usuário
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		//buscar usuario pelo email
+		// buscar usuario pelo email
 		final Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
-		
-		//se o optional não retornar nada dispara exception para indicar que usuário não existe
+
+		// se o optional não retornar nada dispara exception para indicar que usuário não existe
 		final Usuario usuario = usuarioOptional.orElseThrow(() -> new UsernameNotFoundException("Usuário e/ou senha inválido"));
-		
-		//retorna user com login, senha e permissoes
+
+		// retorna user com login, senha e permissoes
 		return new User(email, usuario.getSenha(), getPermissoes(usuario));
 	}
 
 	/**
 	 * Obter permissoes do usuário
+	 * 
 	 * @param usuario
 	 * @return
 	 */
 	private Collection<? extends GrantedAuthority> getPermissoes(Usuario usuario) {
 		Set<SimpleGrantedAuthority> permissoes = new HashSet<>();
-		
-		//percorre permissões do usuário e monta lista desta p/ retornar no usuário
+
+		// percorre permissões do usuário e monta lista desta p/ retornar no usuário
 		usuario.getPermissao().forEach(p -> permissoes.add(new SimpleGrantedAuthority(p.getDescricao())));
-		
+
 		return permissoes;
 	}
 }
