@@ -56,6 +56,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	 */
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+		new TokenEnhancerChain();
+		
+		
 		endpoints.tokenStore(getTokenStore()) // os tokens gerados pelo auth magager são persistidos para consulta
 				.accessTokenConverter(getAccessTokenConverter())
 
