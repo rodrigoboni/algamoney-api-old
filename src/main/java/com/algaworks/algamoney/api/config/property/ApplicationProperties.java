@@ -8,14 +8,29 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author s2it_rboni
  * @since 25/10/18 18:16
  */
-@ConfigurationProperties("algamoney")
-public class AlgamoneyApiProperty {
+@ConfigurationProperties("appProperties")
+public class ApplicationProperties {
 
-	private final Seguranca seguranca = new Seguranca();
+	private final Security security = new Security();
 
-	public static class Seguranca {
+	public Security getSecurity() {
+		return security;
+	}
+
+	public static class Security {
 
 		private boolean enableHttps;
+		private String allowedOrigin = "*";
+
+		
+		public String getAllowedOrigin() {
+			return allowedOrigin;
+		}
+
+		
+		public void setAllowedOrigin(String allowedOrigin) {
+			this.allowedOrigin = allowedOrigin;
+		}
 
 		public boolean isEnableHttps() {
 			return enableHttps;

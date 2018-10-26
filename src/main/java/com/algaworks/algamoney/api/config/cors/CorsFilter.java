@@ -1,8 +1,11 @@
 package com.algaworks.algamoney.api.config.cors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.algaworks.algamoney.api.config.property.ApplicationProperties;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -19,10 +22,8 @@ import java.io.IOException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
 
-	// definir como * para permitir qq origin
-	// private final String allowedOrigin = "http://localhost:8000";
-	// TODO - Melhorar lendo a partir de arquivo properties
-	private final String allowedOrigin = "*";
+	@Autowired
+	private ApplicationProperties appConfig;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -36,7 +37,7 @@ public class CorsFilter implements Filter {
 		// sempre add header indicando origin permitida e envio de credenciais (p/
 		// browser enviar cookies)
 		// (informação para o browser lidar com cors)
-		response.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+		response.setHeader("Access-Control-Allow-Origin", appConfig.getSecurity().getAllowedOrigin());
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 
 		// tratar request options p/ origin válida
@@ -60,7 +61,7 @@ public class CorsFilter implements Filter {
 	}
 
 	private boolean isValidOrigin(String origin) {
-		if ("*".equals(allowedOrigin)) {
+		if ("*".equals(appConfig.getSecurity().getAllowedOrigin())) {
 			return true;
 		}
 
@@ -68,6 +69,6 @@ public class CorsFilter implements Filter {
 			return false;
 		}
 
-		return origin.equalsIgnoreCase(allowedOrigin);
+		return origin.equalsIgnoreCase(appConfig.getSecurity().getAllowedOrigin());
 	}
 }

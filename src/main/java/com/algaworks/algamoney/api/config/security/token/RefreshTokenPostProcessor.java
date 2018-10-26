@@ -1,5 +1,10 @@
 package com.algaworks.algamoney.api.config.security.token;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -12,9 +17,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.algaworks.algamoney.api.config.property.ApplicationProperties;
 
 /**
  * Modificar response http para remover refresh_token do body e por em cookie Este filtro será acionado somente qdo for responder a
@@ -30,6 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 // (org.springframework.security.oauth2.provider.endpoint.TokenEndpoint.postAccessToken)
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken> {
 
+	@Autowired
+	private ApplicationProperties algamoneyApiProperty;
+	
 	/**
 	 * Qdo este método retornar true o método beforebodywrite será invocado(filtra qdo o body deve ser modificado)
 	 */
@@ -59,7 +65,7 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 	private void addRefreshTokenCookie(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = new Cookie("refreshToken", refreshToken);
 		cookie.setHttpOnly(true); // impede acesso via js - gerenciado pelo browser apenas
-		cookie.setSecure(false); // TODO TRUE QDO FOR PRODUÇÃO
+		cookie.setSecure(algamoneyApiProperty.getSecurity().isEnableHttps());
 		cookie.setPath(request.getContextPath() + "/oauth/token");
 		cookie.setMaxAge(2592000); // 30 dias
 		response.addCookie(cookie);
