@@ -1,15 +1,7 @@
 package com.algaworks.algamoney.api.repository.lancamento.impl;
 
-import com.algaworks.algamoney.api.model.Categoria_;
-import com.algaworks.algamoney.api.model.Lancamento;
-import com.algaworks.algamoney.api.model.Lancamento_;
-import com.algaworks.algamoney.api.model.Pessoa_;
-import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
-import com.algaworks.algamoney.api.repository.lancamento.LancamentoRepositoryQuery;
-import com.algaworks.algamoney.api.repository.projection.ResumoLancamento;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.util.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,8 +10,18 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
+
+import com.algaworks.algamoney.api.model.Categoria_;
+import com.algaworks.algamoney.api.model.Lancamento;
+import com.algaworks.algamoney.api.model.Lancamento_;
+import com.algaworks.algamoney.api.model.Pessoa_;
+import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
+import com.algaworks.algamoney.api.repository.lancamento.LancamentoRepositoryQuery;
+import com.algaworks.algamoney.api.repository.projection.ResumoLancamento;
 
 /**
  * Implementação dos filtros / queries específicas p/ entidade lancamento
@@ -56,7 +58,7 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
 		final Root<Lancamento> from = criteria.from(Lancamento.class);
 
-		criteria.select(builder.construct(ResumoLancamento.class, 
+		criteria.select(builder.construct(ResumoLancamento.class,
 				from.get(Lancamento_.codigo), 
 				from.get(Lancamento_.descricao), 
 				from.get(Lancamento_.dataVencimento), 
@@ -64,7 +66,9 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 				from.get(Lancamento_.valor), 
 				from.get(Lancamento_.tipo),
 				from.get(Lancamento_.categoria).get(Categoria_.nome), 
-				from.get(Lancamento_.pessoa).get(Pessoa_.nome)));
+				from.get(Lancamento_.pessoa).get(Pessoa_.nome),
+				builder.greatest(from.get(Lancamento_.codigo)),
+				builder.max(from.get(Lancamento_.codigo))));
 
 		criteria.where(getPredicates(filter, builder, from));
 
